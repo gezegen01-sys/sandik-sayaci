@@ -36,23 +36,14 @@
     flex-direction: column;
     gap: 8px;
     box-shadow: 0 0 25px rgba(0,0,0,0.4);
-  }
-
-  #coinLine {
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-weight: bold;
-    letter-spacing: 0.5px;
+    color: #ffffff;
     word-break: break-word;
   }
 
   #coinIcon {
     color: #00ff88;
-  }
-
-  #senderLine {
-    font-size: 1.2em;
-    color: #b3b3b3;
-    word-break: break-word;
   }
 
   #countdown {
@@ -95,6 +86,7 @@
     top: 0;
     left: 0;
     pointer-events: none;
+    display: none; /* Flicker fix */
   }
 </style>
 </head>
@@ -104,8 +96,9 @@
 <div id="content">
 
   <div id="topInfo">
-    <div id="coinLine">
-      <span id="coinIcon">💲️</span>: <span id="coinText">--/--</span>
+    <div>
+      <span id="coinIcon">💲️</span>: 
+      <span id="coinText">--/--</span>
     </div>
     <div id="senderLine">👨‍✈️: ---</div>
   </div>
@@ -188,6 +181,7 @@ if (edgeParam) {
         edgeMs = measured;
         edgeValue.textContent = `${Math.round(edgeMs)} ms`;
         edgeBox.style.display = "flex";
+        overlay.style.display = "block"; // Flicker fix
         drawOverlay();
     })();
 }
@@ -206,8 +200,6 @@ function triggerSingleFlash() {
 }
 
 function drawOverlay() {
-    if (edgeBox.style.display === "none") return;
-
     overlay.innerHTML = "";
     overlay.setAttribute("width", window.innerWidth);
     overlay.setAttribute("height", window.innerHeight);
