@@ -23,8 +23,11 @@
     text-align:center;
     font-size:1.5em;
     font-weight:bold;
-    margin-bottom:10px;
+    margin-bottom:15px;
     color:#fff;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
   }
 
   #countdown {
@@ -74,8 +77,11 @@
 </head>
 <body>
 
-<!-- Üst bilgi: coin/recipients ve gönderen -->
-<div id="topInfo">--/-- 👨‍✈️ ---</div>
+<!-- Üst bilgi: coin ve gönderen ALT ALTA -->
+<div id="topInfo">
+  <div id="coinLine">💲: --/--</div>
+  <div id="senderLine">👨‍✈️: ---</div>
+</div>
 
 <div id="countdown">--:--:---</div>
 <div id="message">Sandık açılmasına kalan süre</div>
@@ -99,9 +105,15 @@ const recipientsParam = params.get("recipients");
 const senderParam = params.get("sender");
 
 // Üst bilgiyi güncelle
-const topInfoDiv = document.getElementById("topInfo");
-if (coinParam && recipientsParam && senderParam) {
-    topInfoDiv.textContent = `${coinParam}/${recipientsParam} 👨‍✈️ ${senderParam}`;
+const coinLine = document.getElementById("coinLine");
+const senderLine = document.getElementById("senderLine");
+
+if (coinParam && recipientsParam) {
+    coinLine.textContent = `💲: ${coinParam}/${recipientsParam}`;
+}
+
+if (senderParam) {
+    senderLine.textContent = `👨‍✈️: ${senderParam}`;
 }
 
 const cd = document.getElementById("countdown");
@@ -173,7 +185,6 @@ function drawOverlay() {
     const earlyRect = earlyText.getBoundingClientRect();
     const edgeRect = edgeBox.getBoundingClientRect();
 
-    // EarlyText → Orta kutu bağlantısı (tek çizgi kaldı)
     const startX = earlyRect.left + earlyRect.width/2;
     const startY = earlyRect.top;
     const endX = edgeRect.left + edgeRect.width/2;
