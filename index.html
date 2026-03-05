@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sandık Sayacı + Çizgi Şeması</title>
+<title>Sandık Sayacı</title>
+
 <style>
   body {
-    background: #0d1117;
+    background: radial-gradient(circle at top, #161b22, #0d1117 60%);
     color: #fff;
     display: flex;
     justify-content: center;
@@ -14,46 +15,68 @@
     height: 100vh;
     margin: 0;
     font-family: "Segoe UI", sans-serif;
-    flex-direction: column;
     position: relative;
   }
 
+  #content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 440px;
+    max-width: 95%;
+  }
+
+  /* Üst bilgi kart */
   #topInfo {
-    width:100%;
-    text-align:center;
-    font-size:1.5em;
-    font-weight:bold;
-    margin-bottom:15px;
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
+    width: 100%;
+    background: #161b22;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  }
+
+  #coinLine {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #00ff88;
+    letter-spacing: 0.5px;
+    word-break: break-word;
+  }
+
+  #senderLine {
+    font-size: 1.2em;
+    color: #b3b3b3;
+    word-break: break-word;
   }
 
   #countdown {
-    font-size: 4em;
+    font-size: 4.5em;
     font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
   }
 
   #message {
-    margin-top: 10px;
-    color: #aaa;
+    color: #888;
     font-size: 1rem;
+    margin-bottom: 20px;
   }
 
   #edgeBox {
-    margin-top: 25px;
-    padding: 15px 25px;
-    background: black;
-    border-radius: 15px;
+    padding: 14px 24px;
+    background: #111;
+    border-radius: 14px;
     display: none;
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-weight: bold;
-    display: flex;
     align-items: center;
-    gap: 15px;
-    transition: all 0.05s ease;
-    border: 2px solid red;
+    justify-content: center;
+    transition: all 0.1s ease;
+    border: 2px solid #ff3b3b;
   }
 
   #edgeValue {
@@ -61,11 +84,12 @@
   }
 
   #earlyText {
-    margin-top: 40px;
-    font-size: 0.9rem;
-    padding: 5px 8px;
-    border: 2px solid red;
-    border-radius: 5px;
+    margin-top: 35px;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border: 1px solid #ff3b3b;
+    border-radius: 6px;
+    color: #aaa;
   }
 
   #overlay {
@@ -75,22 +99,26 @@
   }
 </style>
 </head>
+
 <body>
 
-<!-- Üst bilgi: coin ve gönderen ALT ALTA -->
-<div id="topInfo">
-  <div id="coinLine">💲: --/--</div>
-  <div id="senderLine">👨‍✈️: ---</div>
+<div id="content">
+
+  <div id="topInfo">
+    <div id="coinLine">💲️: --/--</div>
+    <div id="senderLine">👨‍✈️: ---</div>
+  </div>
+
+  <div id="countdown">--:--:---</div>
+  <div id="message">Sandık açılmasına kalan süre</div>
+
+  <div id="edgeBox">
+    <span id="edgeValue">-- ms</span>
+  </div>
+
+  <div id="earlyText">Erken açılması gereken süre</div>
+
 </div>
-
-<div id="countdown">--:--:---</div>
-<div id="message">Sandık açılmasına kalan süre</div>
-
-<div id="edgeBox">
-  <span id="edgeValue">-- ms</span>
-</div>
-
-<div id="earlyText">Erken açılması gereken süre</div>
 
 <svg id="overlay"></svg>
 
@@ -104,12 +132,11 @@ const coinParam = params.get("coin");
 const recipientsParam = params.get("recipients");
 const senderParam = params.get("sender");
 
-// Üst bilgiyi güncelle
 const coinLine = document.getElementById("coinLine");
 const senderLine = document.getElementById("senderLine");
 
 if (coinParam && recipientsParam) {
-    coinLine.textContent = `💲: ${coinParam}/${recipientsParam}`;
+    coinLine.textContent = `💲️: ${coinParam}/${recipientsParam}`;
 }
 
 if (senderParam) {
@@ -169,12 +196,12 @@ const unpackAtMs = unpackAtParam * 1000;
 function triggerSingleFlash() {
     edgeBox.style.background = "#ff0000";
     edgeBox.style.boxShadow = "0 0 25px 20px #ff0000";
-    edgeBox.style.transform = "scale(1.2)";
+    edgeBox.style.transform = "scale(1.15)";
     setTimeout(() => {
-        edgeBox.style.background = "black";
+        edgeBox.style.background = "#111";
         edgeBox.style.boxShadow = "none";
         edgeBox.style.transform = "scale(1)";
-    }, 100);
+    }, 120);
 }
 
 function drawOverlay() {
@@ -195,7 +222,7 @@ function drawOverlay() {
     line.setAttribute("y1", startY);
     line.setAttribute("x2", endX);
     line.setAttribute("y2", endY);
-    line.setAttribute("stroke","red");
+    line.setAttribute("stroke","#ff3b3b");
     line.setAttribute("stroke-width","2");
     overlay.appendChild(line);
 }
@@ -232,5 +259,6 @@ function update() {
 window.addEventListener("resize", drawOverlay);
 update();
 </script>
+
 </body>
 </html>
