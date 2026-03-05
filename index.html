@@ -26,7 +26,6 @@
     max-width: 95%;
   }
 
-  /* Üst bilgi kart */
   #topInfo {
     width: 100%;
     background: #161b22;
@@ -42,9 +41,12 @@
   #coinLine {
     font-size: 1.6em;
     font-weight: bold;
-    color: #00ff88;
     letter-spacing: 0.5px;
     word-break: break-word;
+  }
+
+  #coinIcon {
+    color: #00ff88;
   }
 
   #senderLine {
@@ -79,10 +81,6 @@
     border: 2px solid #ff3b3b;
   }
 
-  #edgeValue {
-    color: white;
-  }
-
   #earlyText {
     margin-top: 35px;
     font-size: 0.85rem;
@@ -96,6 +94,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    pointer-events: none;
   }
 </style>
 </head>
@@ -105,7 +104,9 @@
 <div id="content">
 
   <div id="topInfo">
-    <div id="coinLine">💲️: --/--</div>
+    <div id="coinLine">
+      <span id="coinIcon">💲️</span>: <span id="coinText">--/--</span>
+    </div>
     <div id="senderLine">👨‍✈️: ---</div>
   </div>
 
@@ -132,11 +133,11 @@ const coinParam = params.get("coin");
 const recipientsParam = params.get("recipients");
 const senderParam = params.get("sender");
 
-const coinLine = document.getElementById("coinLine");
+const coinText = document.getElementById("coinText");
 const senderLine = document.getElementById("senderLine");
 
 if (coinParam && recipientsParam) {
-    coinLine.textContent = `💲️: ${coinParam}/${recipientsParam}`;
+    coinText.textContent = `${coinParam}/${recipientsParam}`;
 }
 
 if (senderParam) {
@@ -205,6 +206,8 @@ function triggerSingleFlash() {
 }
 
 function drawOverlay() {
+    if (edgeBox.style.display === "none") return;
+
     overlay.innerHTML = "";
     overlay.setAttribute("width", window.innerWidth);
     overlay.setAttribute("height", window.innerHeight);
