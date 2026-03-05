@@ -3,116 +3,101 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sandık Sayacı</title>
-
+<title>Sandık Sayacı + Çizgi Şeması</title>
 <style>
   body {
-    background: radial-gradient(circle at top, #161b22, #0d1117 60%);
+    background: #0d1117;
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     font-family: "Segoe UI", sans-serif;
-    position: relative;
-  }
-
-  #content {
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 440px;
-    max-width: 95%;
+    position: relative;
+    overflow: hidden; /* sayfa kaymasını engeller */
   }
 
   #topInfo {
-    width: 100%;
-    background: #161b22;
-    border-radius: 14px;
-    padding: 16px 20px;
-    margin-bottom: 25px;
-    display: flex;
+    width:100%;
+    text-align:center;
+    font-size:1.5em;
+    font-weight:bold;
+    margin-bottom:10px;
+    color:#fff;
+    display:flex;
+    justify-content:center;
     flex-direction: column;
-    gap: 8px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.4);
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #ffffff;
-    word-break: break-word;
+    line-height:1.3em; /* coin ve sender satırları alt alta */
   }
 
-  #coinIcon {
-    color: #00ff88;
+  #topInfo span {
+    display:block;
   }
 
   #countdown {
-    font-size: 4.5em;
+    font-size: 4em;
     font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
+    margin-top: 10px;
   }
 
   #message {
-    color: #888;
+    margin-top: 10px;
+    color: #aaa;
     font-size: 1rem;
-    margin-bottom: 20px;
   }
 
   #edgeBox {
-    padding: 14px 24px;
-    background: #111;
-    border-radius: 14px;
+    margin-top: 25px;
+    padding: 15px 25px;
+    background: black;
+    border-radius: 15px;
     display: none;
-    font-size: 1.4em;
+    font-size: 1.6em;
     font-weight: bold;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.1s ease;
-    border: 2px solid #ff3b3b;
+    gap: 15px;
+    transition: all 0.05s ease;
+    border: 2px solid red;
+  }
+
+  #edgeValue {
+    color: white;
   }
 
   #earlyText {
-    margin-top: 35px;
-    font-size: 0.85rem;
-    padding: 6px 10px;
-    border: 1px solid #ff3b3b;
-    border-radius: 6px;
-    color: #aaa;
+    margin-top: 40px;
+    font-size: 0.9rem;
+    padding: 5px 8px;
+    border: 2px solid red;
+    border-radius: 5px;
   }
 
   #overlay {
     position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none;
-    display: none; /* Flicker fix */
   }
 </style>
 </head>
-
 <body>
 
-<div id="content">
-
-  <div id="topInfo">
-    <div>
-      <span id="coinIcon">💲️</span>: 
-      <span id="coinText">--/--</span>
-    </div>
-    <div id="senderLine">👨‍✈️: ---</div>
-  </div>
-
-  <div id="countdown">--:--:---</div>
-  <div id="message">Sandık açılmasına kalan süre</div>
-
-  <div id="edgeBox">
-    <span id="edgeValue">-- ms</span>
-  </div>
-
-  <div id="earlyText">Erken açılması gereken süre</div>
-
+<!-- Üst bilgi: coin/recipients ve gönderen -->
+<div id="topInfo">
+  <span id="coinLine">💲: --/--</span>
+  <span id="senderLine">👨‍✈️: ---</span>
 </div>
+
+<div id="countdown">--:--:---</div>
+<div id="message">Sandık açılmasına kalan süre</div>
+
+<div id="edgeBox">
+  <span id="edgeValue">-- ms</span>
+</div>
+
+<div id="earlyText">Erken açılması gereken süre</div>
 
 <svg id="overlay"></svg>
 
@@ -126,16 +111,11 @@ const coinParam = params.get("coin");
 const recipientsParam = params.get("recipients");
 const senderParam = params.get("sender");
 
-const coinText = document.getElementById("coinText");
+// Üst bilgiyi güncelle
+const coinLine = document.getElementById("coinLine");
 const senderLine = document.getElementById("senderLine");
-
-if (coinParam && recipientsParam) {
-    coinText.textContent = `${coinParam}/${recipientsParam}`;
-}
-
-if (senderParam) {
-    senderLine.textContent = `👨‍✈️: ${senderParam}`;
-}
+if(coinParam && recipientsParam) coinLine.textContent = `💲: ${coinParam}/${recipientsParam}`;
+if(senderParam) senderLine.textContent = `👨‍✈️: ${senderParam}`;
 
 const cd = document.getElementById("countdown");
 const msg = document.getElementById("message");
@@ -181,7 +161,6 @@ if (edgeParam) {
         edgeMs = measured;
         edgeValue.textContent = `${Math.round(edgeMs)} ms`;
         edgeBox.style.display = "flex";
-        overlay.style.display = "block"; // Flicker fix
         drawOverlay();
     })();
 }
@@ -191,12 +170,12 @@ const unpackAtMs = unpackAtParam * 1000;
 function triggerSingleFlash() {
     edgeBox.style.background = "#ff0000";
     edgeBox.style.boxShadow = "0 0 25px 20px #ff0000";
-    edgeBox.style.transform = "scale(1.15)";
+    edgeBox.style.transform = "scale(1.2)";
     setTimeout(() => {
-        edgeBox.style.background = "#111";
+        edgeBox.style.background = "black";
         edgeBox.style.boxShadow = "none";
         edgeBox.style.transform = "scale(1)";
-    }, 120);
+    }, 100);
 }
 
 function drawOverlay() {
@@ -217,7 +196,7 @@ function drawOverlay() {
     line.setAttribute("y1", startY);
     line.setAttribute("x2", endX);
     line.setAttribute("y2", endY);
-    line.setAttribute("stroke","#ff3b3b");
+    line.setAttribute("stroke","red");
     line.setAttribute("stroke-width","2");
     overlay.appendChild(line);
 }
@@ -229,10 +208,7 @@ function update() {
     if (remaining <= 0) {
         cd.textContent = "00:00:000";
         msg.textContent = "🎉 Sandık açıldı!";
-        setTimeout(() => {
-            window.open('', '_self');
-            window.close();
-        }, 500);
+        setTimeout(() => { window.open('', '_self'); window.close(); }, 500);
         return;
     }
 
@@ -242,7 +218,7 @@ function update() {
 
     cd.textContent = `${minutes}:${seconds}:${milliseconds}`;
 
-    if (edgeMs !== null && !flashDone && remaining <= (edgeMs + leadTime)) {
+    if(edgeMs !== null && !flashDone && remaining <= (edgeMs + leadTime)){
         flashDone = true;
         triggerSingleFlash();
     }
@@ -254,6 +230,5 @@ function update() {
 window.addEventListener("resize", drawOverlay);
 update();
 </script>
-
 </body>
 </html>
